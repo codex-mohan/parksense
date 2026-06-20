@@ -65,36 +65,35 @@ ParkSense is a two-component intelligence platform:
 
     ┌──────────────────────┐              ┌──────────────────────┐
     │   DATA INGESTION     │              │   ML PIPELINE        │
-    │                      │              │                      │
-    │  CSV (298K records)  │─────────────>│  Feature Engineering │
-    │  Bengaluru Traffic   │              │  HDBSCAN Clustering  │
-    │  Police Violations   │              │  6-Model Ensemble    │
-    └──────────────────────┘              │  Validation Suite    │
+    │                      │              │   (parksense-ml)     │
+    │  CSV (298K records)  │─────────────>│                      │
+    │  Bengaluru Traffic   │              │  Feature Engineering │
+    │  Police Violations   │              │  HDBSCAN Clustering  │
+    └──────────────────────┘              │  6-Model Ensemble    │
+                                          │  Validation Suite    │
                                           └──────────┬───────────┘
                                                      │
-                                          ┌──────────▼───────────┐
-                                          │   EXPORT LAYER       │
-                                          │                      │
-                                          │  violations.json     │
-                                          │  clusters.json       │
-                                          │  zones.json          │
-                                          │  model_comparison    │
-                                          │  validation_results  │
-                                          └──────────┬───────────┘
-                                                     │
-                    ┌────────────────────────────────▼──────────┐
-                    │           INTERACTIVE DASHBOARD            │
-                    │                                           │
-                    │  ┌─────────┐  ┌──────────┐  ┌──────────┐ │
-                    │  │  MAP    │  │ SIDEBAR  │  │ CHARTS   │ │
-                    │  │ Deck.gl │  │ Zones    │  │ Temporal │ │
-                    │  │ MapLibre│  │ Filters  │  │ Analysis │ │
-                    │  └─────────┘  └──────────┘  └──────────┘ │
-                    │  ┌─────────────────┐  ┌────────────────┐  │
-                    │  │   PREDICTOR     │  │ MODEL COMPARE  │  │
-                    │  │  What-if Sim    │  │  6 Models      │  │
-                    │  └─────────────────┘  └────────────────┘  │
-                    └───────────────────────────────────────────┘
+                                    ┌────────────────┼────────────────┐
+                                    │                │                │
+                          ┌─────────▼────────┐ ┌────▼──────────┐ ┌──▼──────────────┐
+                          │  EXPORT LAYER    │ │ MODEL FILES   │ │ FastAPI BACKEND │
+                          │                  │ │               │ │ (parksense-     │
+                          │  violations.json │ │ .pkl .cbm     │ │  backend)       │
+                          │  clusters.json   │ │ .txt          │ │                 │
+                          │  zones.json      │ │               │ │ /predict        │
+                          │  model_comparison│ │               │ │ /models         │
+                          └────────┬─────────┘ └───────────────┘ └───────┬─────────┘
+                                   │                                      │
+                    ┌──────────────▼──────────────────────────────────────▼──────┐
+                    │                   INTERACTIVE DASHBOARD                     │
+                    │                   (parksense — Next.js)                     │
+                    │                                                            │
+                    │  ┌─────────┐  ┌──────────┐  ┌──────────┐  ┌────────────┐  │
+                    │  │  MAP    │  │ SIDEBAR  │  │ CHARTS   │  │ PREDICTOR  │  │
+                    │  │ Deck.gl │  │ Zones    │  │ Temporal │  │ What-if    │  │
+                    │  │ MapLibre│  │ Filters  │  │ Analysis │  │ Simulator  │  │
+                    │  └─────────┘  └──────────┘  └──────────┘  └────────────┘  │
+                    └────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -227,36 +226,41 @@ Predictions appear as **interactive markers** on the map with hover tooltips sho
 
 ```
 parksense/
-├── parking_intelligence/          # Python ML pipeline
-│   ├── config.py                  # Constants, severity maps, parameters
-│   ├── pipeline.py                # Data loading, cleaning, feature engineering
-│   ├── model.py                   # HDBSCAN clustering, LightGBM training
-│   ├── predict.py                 # Prediction API class
-│   ├── ensemble.py                # Multi-model training + validation
-│   ├── export_data.py             # JSON export for frontend
-│   ├── visualize.py               # Folium maps, SHAP analysis
-│   └── outputs/models/            # Saved model files
+├── parksense-ml/                    # Python ML pipeline
+│   ├── config.py                    # Constants, severity maps, parameters
+│   ├── pipeline.py                  # Data loading, cleaning, feature engineering
+│   ├── model.py                     # HDBSCAN clustering, LightGBM training
+│   ├── predict.py                   # Prediction API class
+│   ├── ensemble.py                  # Multi-model training + validation
+│   ├── export_data.py               # JSON export for frontend
+│   ├── visualize.py                 # Folium maps, SHAP analysis
+│   └── outputs/models/              # Saved model files (.pkl, .cbm, .txt)
 │
-├── parksense/                     # Next.js dashboard
+├── parksense-backend/               # FastAPI inference server
+│   ├── main.py                      # API endpoints, model loading, feature engineering
+│   ├── requirements.txt             # Python dependencies
+│   └── start.bat                    # Windows startup script
+│
+├── parksense/                       # Next.js dashboard
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── page.tsx           # Main dashboard page
-│   │   │   ├── layout.tsx         # Root layout with dark theme
-│   │   │   ├── globals.css        # Neon theme, glass effects
-│   │   │   └── api/predict/       # Prediction API route
+│   │   │   ├── page.tsx             # Main dashboard page
+│   │   │   ├── layout.tsx           # Root layout with dark theme
+│   │   │   ├── globals.css          # Neon theme, glass effects
+│   │   │   └── api/predict/         # Proxies to FastAPI backend
 │   │   ├── components/
-│   │   │   ├── Map.tsx            # Deck.gl + MapLibre map
-│   │   │   ├── Header.tsx         # Top navigation bar
-│   │   │   ├── Sidebar.tsx        # Zone list, layer toggles, filters
-│   │   │   ├── StatsPanel.tsx     # Summary statistics bar
-│   │   │   ├── TemporalChart.tsx  # Hourly/daily/vehicle charts
-│   │   │   ├── ZoneDetail.tsx     # Zone drill-down panel
-│   │   │   ├── Predictor.tsx      # What-if prediction simulator
-│   │   │   └── ModelComparison.tsx # Model benchmark dashboard
-│   │   └── types/index.ts         # TypeScript interfaces
-│   └── public/data/               # Exported JSON data files
+│   │   │   ├── Map.tsx              # Deck.gl + MapLibre map
+│   │   │   ├── Header.tsx           # Top navigation bar
+│   │   │   ├── Sidebar.tsx          # Zone list, layer toggles, filters
+│   │   │   ├── StatsPanel.tsx       # Summary statistics bar
+│   │   │   ├── TemporalChart.tsx    # Hourly/daily/vehicle charts
+│   │   │   ├── ZoneDetail.tsx       # Zone drill-down panel
+│   │   │   ├── Predictor.tsx        # What-if prediction simulator
+│   │   │   └── ModelComparison.tsx  # Model benchmark dashboard
+│   │   └── types/index.ts           # TypeScript interfaces
+│   └── public/data/                 # Exported JSON data files
 │
-├── data/                          # Source dataset (gitignored)
+├── jan to may police violation*.csv # Source dataset (gitignored)
 └── .gitignore
 ```
 
@@ -277,8 +281,11 @@ parksense/
 git clone https://github.com/codex-mohan/parksense.git
 cd parksense
 
-# Install Python dependencies
+# Install ML pipeline dependencies
 pip install lightgbm xgboost catboost hdbscan scikit-learn pandas numpy joblib
+
+# Install backend dependencies
+pip install -r parksense-backend/requirements.txt
 
 # Install frontend dependencies
 cd parksense
@@ -292,18 +299,23 @@ pnpm install
 # File: "jan to may police violation_anonymized791b166.csv"
 
 # Run the full pipeline (feature engineering + clustering + model training)
-python -m parking_intelligence.main
+python -m parksense_ml.main
 
 # Train the multi-model ensemble + validation
-python -m parking_intelligence.ensemble
+python -m parksense_ml.ensemble
 
 # Export data for the frontend
-python -m parking_intelligence.export_data
+python -m parksense_ml.export_data
 ```
 
-### Running the Dashboard
+### Running (3 terminals)
 
 ```bash
+# Terminal 1 — ML Backend (FastAPI, port 8002)
+cd parksense-backend
+python -m uvicorn main:app --reload --port 8002
+
+# Terminal 2 — Frontend (Next.js, port 3000)
 cd parksense
 pnpm run dev
 ```
@@ -314,39 +326,58 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ## API Reference
 
-### POST /api/predict
+The frontend calls `/api/predict` which proxies to the FastAPI backend on port 8002.
 
-Predicts congestion impact for a hypothetical parking scenario.
+### FastAPI Backend (port 8002)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/` | Health check, lists loaded models |
+| `GET` | `/models` | Returns available models and their status |
+| `POST` | `/predict` | Run ML inference on a parking scenario |
+| `GET` | `/health` | Service health status |
+
+### POST /predict
+
+Runs actual ML model inference (not rule-based).
 
 **Request Body:**
 
-| Field | Type | Description |
-|-------|------|-------------|
-| latitude | number | Location latitude |
-| longitude | number | Location longitude |
-| hour | number | Time of day (0-23) |
-| day_of_week | number | Day (0=Mon, 6=Sun) |
-| month | number | Month (1-12) |
-| police_station | string | Jurisdiction name |
-| vehicle_type | string | Vehicle classification |
-| junction_name | string | Junction identifier |
-| violation_type | string | Type of parking violation |
-| model | string | Prediction model to use |
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| latitude | number | 12.97 | Location latitude |
+| longitude | number | 77.59 | Location longitude |
+| hour | int | 12 | Time of day (0-23) |
+| day_of_week | int | 2 | Day (0=Mon, 6=Sun) |
+| month | int | 12 | Month (1-12) |
+| police_station | string | "City Market" | Jurisdiction name |
+| vehicle_type | string | "CAR" | Vehicle classification |
+| junction_name | string | "No Junction" | Junction identifier |
+| violation_type | string | "NO PARKING" | Type of parking violation |
+| model | string | "stacking" | lightgbm / xgboost / catboost / random_forest / voting / stacking |
 
 **Response:**
 
 ```json
 {
-  "congestion_score": 70.0,
-  "congestion_level": "HIGH",
-  "model_used": "Stacking Ensemble",
-  "recommendation": "HIGH PRIORITY — Schedule enforcement within 1 hour.",
+  "congestion_score": 80.7,
+  "congestion_level": "CRITICAL",
+  "model_used": "CatBoost",
+  "ml_score": 80.7,
+  "rule_score": 100.0,
+  "recommendation": "IMMEDIATE DISPATCH — High congestion impact.",
   "risk_factors": {
     "at_junction": true,
     "rush_hour": true,
-    "heavy_vehicle": false,
-    "main_road_violation": true,
-    "severity": 4
+    "heavy_vehicle": true,
+    "main_road_violation": false,
+    "severity": 5
+  },
+  "class_probabilities": {
+    "LOW": 0.03,
+    "MEDIUM": 0.03,
+    "HIGH": 0.03,
+    "CRITICAL": 0.9
   }
 }
 ```

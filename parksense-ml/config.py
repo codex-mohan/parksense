@@ -2,7 +2,7 @@ from pathlib import Path
 
 WORKSPACE = Path(__file__).parent.parent
 DATA_PATH = WORKSPACE / "jan to may police violation_anonymized791b166.csv"
-OUTPUT_DIR = WORKSPACE / "parking_intelligence" / "outputs"
+OUTPUT_DIR = WORKSPACE / "parksense-ml" / "outputs"
 MODEL_DIR = OUTPUT_DIR / "models"
 FIGURE_DIR = OUTPUT_DIR / "figures"
 REPORT_DIR = OUTPUT_DIR / "reports"

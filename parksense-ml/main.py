@@ -5,12 +5,12 @@ warnings.filterwarnings("ignore")
 
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).parent.parent))
 
-from parking_intelligence.pipeline import run_pipeline
-from parking_intelligence.model import (
+from parksense_ml.pipeline import run_pipeline
+from parksense_ml.model import (
     detect_hotspots, train_congestion_model, train_classifier,
     compute_zone_priority, save_models,
 )
-from parking_intelligence.visualize import (
+from parksense_ml.visualize import (
     plot_hotspot_map, plot_shap_summary, plot_shap_bar,
     plot_temporal_patterns, plot_enforcement_priority,
     plot_cluster_analysis, generate_report,

@@ -32,9 +32,8 @@ next-env.d.ts
 *.h5
 *.hdf5
 
-# parken Intelligence outputs (regenerable)
-parking_intelligence/outputs/
-catboost_info/
+# ML outputs (regenerable)
+parksense-ml/outputs/
 
 # Public data (regenerable from Python model)
 parksense/public/data/

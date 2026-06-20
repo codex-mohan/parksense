@@ -6,8 +6,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from parking_intelligence.pipeline import run_pipeline
-from parking_intelligence.model import detect_hotspots, compute_zone_priority
+from parksense_ml.pipeline import run_pipeline
+from parksense_ml.model import detect_hotspots, compute_zone_priority
 
 OUTPUT_DIR = Path(__file__).parent.parent / "parksense" / "public" / "data"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
