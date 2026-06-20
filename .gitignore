@@ -1,0 +1,66 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.pkl
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# === Next.js / Node ===
+node_modules/
+.next/
+out/
+.pnp.*
+*.tsbuildinfo
+next-env.d.ts
+
+# === Data (large files) ===
+*.csv
+*.parquet
+*.h5
+*.hdf5
+
+# parken Intelligence outputs (regenerable)
+parking_intelligence/outputs/
+
+# Public data (regenerable from Python model)
+parksen/public/data/
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Environment ===
+.env
+.env.local
+.env.*.local
+
+# === Logs ===
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# === Misc ===
+*.bak
+*.tmp
+*.cache
