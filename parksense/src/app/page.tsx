@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { Zap } from "lucide-react";
+import { Zap, BarChart3, Clock } from "lucide-react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import StatsPanel from "@/components/StatsPanel";
 import TemporalChart from "@/components/TemporalChart";
 import ZoneDetail from "@/components/ZoneDetail";
 import Predictor from "@/components/Predictor";
+import ModelComparison from "@/components/ModelComparison";
 import type { Violation, Cluster, Zone, TemporalData, Summary, MapLayer } from "@/types";
 
 const MapComponent = dynamic(() => import("@/components/Map"), { ssr: false });
@@ -28,6 +29,7 @@ export default function Home() {
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
   const [selectedCluster, setSelectedCluster] = useState<Cluster | null>(null);
   const [showPredictor, setShowPredictor] = useState(false);
+  const [bottomTab, setBottomTab] = useState<"temporal" | "models">("temporal");
 
   useEffect(() => {
     async function load() {
@@ -158,10 +160,35 @@ export default function Home() {
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="h-64 border-t border-neon-cyan/10 overflow-y-auto bg-background/80 backdrop-blur-sm shrink-0"
+              className="h-72 border-t border-neon-cyan/10 flex flex-col overflow-hidden bg-background/80 backdrop-blur-sm shrink-0"
             >
-              <div className="p-4">
-                <TemporalChart data={temporal} />
+              <div className="flex items-center gap-1 px-4 pt-2 shrink-0">
+                <button
+                  onClick={() => setBottomTab("temporal")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    bottomTab === "temporal"
+                      ? "bg-neon-cyan/15 text-neon-cyan border border-neon-cyan/25"
+                      : "text-foreground/40 hover:text-foreground/60 border border-transparent"
+                  }`}
+                >
+                  <Clock className="w-3.5 h-3.5" />
+                  Temporal
+                </button>
+                <button
+                  onClick={() => setBottomTab("models")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    bottomTab === "models"
+                      ? "bg-neon-cyan/15 text-neon-cyan border border-neon-cyan/25"
+                      : "text-foreground/40 hover:text-foreground/60 border border-transparent"
+                  }`}
+                >
+                  <BarChart3 className="w-3.5 h-3.5" />
+                  Models
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-4">
+                {bottomTab === "temporal" && <TemporalChart data={temporal} />}
+                {bottomTab === "models" && <ModelComparison />}
               </div>
             </motion.div>
           </div>

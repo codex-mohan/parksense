@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Zap, MapPin, Clock, Car, AlertTriangle,
-  ChevronDown, Target, Shield,
+  Zap, Shield, ChevronDown,
 } from "lucide-react";
 
 const STATIONS = [
@@ -40,6 +39,21 @@ const VIOLATION_TYPES = [
   "PARKING NEAR ROAD CROSSING",
 ];
 
+const MODELS = [
+  { key: "ensemble", label: "Ensemble (Stacking)" },
+  { key: "lightgbm", label: "LightGBM" },
+  { key: "xgboost", label: "XGBoost" },
+  { key: "catboost", label: "CatBoost" },
+  { key: "random_forest", label: "Random Forest" },
+];
+
+const LEVEL_COLOR: Record<string, string> = {
+  LOW: "text-neon-green",
+  MEDIUM: "text-neon-yellow",
+  HIGH: "text-[#e67e22]",
+  CRITICAL: "text-neon-red",
+};
+
 interface PredictorProps {
   onPredict?: (params: any) => void;
 }
@@ -54,6 +68,7 @@ export default function Predictor({ onPredict }: PredictorProps) {
   const [vehicleType, setVehicleType] = useState("CAR");
   const [junction, setJunction] = useState("BTP082 - KR Market Junction");
   const [violationType, setViolationType] = useState("PARKING IN A MAIN ROAD");
+  const [selectedModel, setSelectedModel] = useState("ensemble");
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
@@ -73,6 +88,7 @@ export default function Predictor({ onPredict }: PredictorProps) {
           vehicle_type: vehicleType,
           junction_name: junction,
           violation_type: violationType,
+          model: selectedModel,
         }),
       });
       const data = await res.json();
@@ -82,17 +98,10 @@ export default function Predictor({ onPredict }: PredictorProps) {
       setResult({
         congestion_score: Math.round(Math.random() * 100),
         congestion_level: ["LOW", "MEDIUM", "HIGH", "CRITICAL"][Math.floor(Math.random() * 4)],
-        recommendation: "Mock prediction — connect FastAPI backend for real inference.",
+        recommendation: "Mock prediction — connect backend for real inference.",
       });
     }
     setLoading(false);
-  };
-
-  const levelColor: Record<string, string> = {
-    LOW: "text-neon-green",
-    MEDIUM: "text-neon-yellow",
-    HIGH: "text-[#e67e22]",
-    CRITICAL: "text-neon-red",
   };
 
   return (
@@ -102,12 +111,32 @@ export default function Predictor({ onPredict }: PredictorProps) {
       transition={{ delay: 0.7 }}
       className="glass rounded-xl p-4"
     >
-      <h3 className="text-sm font-semibold text-neon-cyan mb-4 flex items-center gap-2">
+      <h3 className="text-sm font-semibold text-neon-cyan mb-3 flex items-center gap-2">
         <Zap className="w-4 h-4" />
         CONGESTION PREDICTOR
       </h3>
 
-      <div className="space-y-3">
+      {/* Model selector */}
+      <div className="mb-3">
+        <label className="text-[10px] text-foreground/40 block mb-1">Prediction Model</label>
+        <div className="grid grid-cols-2 gap-1">
+          {MODELS.map((m) => (
+            <button
+              key={m.key}
+              onClick={() => setSelectedModel(m.key)}
+              className={`px-2 py-1.5 rounded text-[10px] font-medium transition-all ${
+                selectedModel === m.key
+                  ? "bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/30"
+                  : "bg-surface text-foreground/40 hover:text-foreground/60 border border-transparent"
+              }`}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-2.5">
         <div className="grid grid-cols-2 gap-2">
           <div>
             <label className="text-[10px] text-foreground/40 block mb-1">Latitude</label>
@@ -244,16 +273,22 @@ export default function Predictor({ onPredict }: PredictorProps) {
               <div className="glass rounded-lg p-3 border border-neon-cyan/20 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-foreground/50">Congestion Score</span>
-                  <span className={`text-lg font-bold ${levelColor[result.congestion_level] || "text-foreground"}`}>
+                  <span className={`text-lg font-bold ${LEVEL_COLOR[result.congestion_level] || "text-foreground"}`}>
                     {result.congestion_score?.toFixed(1)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-foreground/50">Level</span>
-                  <span className={`text-sm font-bold ${levelColor[result.congestion_level] || "text-foreground"}`}>
+                  <span className={`text-sm font-bold ${LEVEL_COLOR[result.congestion_level] || "text-foreground"}`}>
                     {result.congestion_level}
                   </span>
                 </div>
+                {result.model_used && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-foreground/50">Model</span>
+                    <span className="text-xs text-neon-cyan">{result.model_used}</span>
+                  </div>
+                )}
                 {result.recommendation && (
                   <div className="pt-2 border-t border-border">
                     <p className="text-xs text-foreground/60 flex items-start gap-1.5">
