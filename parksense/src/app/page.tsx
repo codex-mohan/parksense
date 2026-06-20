@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
+import { Zap } from "lucide-react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import StatsPanel from "@/components/StatsPanel";
@@ -87,93 +88,93 @@ export default function Home() {
     <div className="h-screen w-screen flex flex-col overflow-hidden bg-background">
       <Header />
 
-      <div className="flex-1 flex pt-14 overflow-hidden">
-        <Sidebar
-          zones={zones}
-          activeLayer={activeLayer}
-          onLayerChange={setActiveLayer}
-          hourFilter={hourFilter}
-          onHourFilterChange={setHourFilter}
-          levelFilter={levelFilter}
-          onLevelFilterChange={setLevelFilter}
-          selectedZone={selectedZone}
-          onZoneSelect={(zone) => {
-            setSelectedZone(zone);
-            setSelectedCluster(null);
-          }}
-        />
-
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex-1 relative">
-            <MapComponent
-              violations={violations}
-              clusters={clusters}
-              activeLayer={activeLayer}
-              hourFilter={hourFilter}
-              levelFilter={levelFilter}
-              onClusterClick={(c) => {
-                setSelectedCluster(c);
-                setSelectedZone(null);
-              }}
-              onViolationClick={() => {}}
-            />
-
-            <div className="absolute top-4 left-4 right-4 flex gap-3 pointer-events-none">
-              <div className="pointer-events-auto flex-1">
-                <StatsPanel summary={summary} />
-              </div>
-            </div>
-
-            <div className="absolute top-4 right-4 pointer-events-auto">
-              <button
-                onClick={() => setShowPredictor(!showPredictor)}
-                className={`glass px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all ${
-                  showPredictor
-                    ? "neon-border text-neon-magenta"
-                    : "text-neon-magenta/70 hover:text-neon-magenta"
-                }`}
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                PREDICTOR
-              </button>
-            </div>
-
-            {showPredictor && (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="absolute top-16 right-4 w-80 pointer-events-auto max-h-[calc(100%-5rem)] overflow-y-auto"
-              >
-                <Predictor />
-              </motion.div>
-            )}
-          </div>
-
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="h-72 border-t border-neon-cyan/10 overflow-y-auto bg-background/80 backdrop-blur-sm"
+      <div className="flex-1 flex flex-col pt-14 overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="px-4 py-2 border-b border-neon-cyan/10 flex items-center justify-between bg-surface/30 shrink-0"
+        >
+          <StatsPanel summary={summary} />
+          <button
+            onClick={() => setShowPredictor(!showPredictor)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition-all ${
+              showPredictor
+                ? "bg-neon-magenta/20 text-neon-magenta border border-neon-magenta/30"
+                : "bg-surface text-neon-magenta/70 hover:text-neon-magenta border border-transparent"
+            }`}
           >
-            <div className="p-4">
-              <TemporalChart data={temporal} />
-            </div>
-          </motion.div>
-        </div>
+            <Zap className="w-3.5 h-3.5" />
+            PREDICT
+          </button>
+        </motion.div>
 
-        {activeZoneData && (
-          <ZoneDetail
-            zone={activeZoneData}
-            cluster={selectedCluster}
-            onClose={() => {
-              setSelectedZone(null);
+        <div className="flex-1 flex overflow-hidden">
+          <Sidebar
+            zones={zones}
+            activeLayer={activeLayer}
+            onLayerChange={setActiveLayer}
+            hourFilter={hourFilter}
+            onHourFilterChange={setHourFilter}
+            levelFilter={levelFilter}
+            onLevelFilterChange={setLevelFilter}
+            selectedZone={selectedZone}
+            onZoneSelect={(zone) => {
+              setSelectedZone(zone);
               setSelectedCluster(null);
             }}
           />
-        )}
+
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 relative">
+              <MapComponent
+                violations={violations}
+                clusters={clusters}
+                activeLayer={activeLayer}
+                hourFilter={hourFilter}
+                levelFilter={levelFilter}
+                onClusterClick={(c) => {
+                  setSelectedCluster(c);
+                  setSelectedZone(null);
+                }}
+                onViolationClick={() => {}}
+              />
+
+              {showPredictor && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="absolute top-4 right-4 w-80 pointer-events-auto max-h-[calc(100%-2rem)] overflow-y-auto z-10"
+                >
+                  <Predictor />
+                </motion.div>
+              )}
+            </div>
+
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="h-64 border-t border-neon-cyan/10 overflow-y-auto bg-background/80 backdrop-blur-sm shrink-0"
+            >
+              <div className="p-4">
+                <TemporalChart data={temporal} />
+              </div>
+            </motion.div>
+          </div>
+
+          {activeZoneData && (
+            <ZoneDetail
+              zone={activeZoneData}
+              cluster={selectedCluster}
+              onClose={() => {
+                setSelectedZone(null);
+                setSelectedCluster(null);
+              }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
