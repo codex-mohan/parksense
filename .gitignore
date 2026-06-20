@@ -34,9 +34,10 @@ next-env.d.ts
 
 # parken Intelligence outputs (regenerable)
 parking_intelligence/outputs/
+catboost_info/
 
 # Public data (regenerable from Python model)
-parksen/public/data/
+parksense/public/data/
 
 # === IDE ===
 .vscode/
