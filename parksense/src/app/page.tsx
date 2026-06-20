@@ -64,7 +64,7 @@ export default function Home() {
           animate={{ opacity: 1, scale: 1 }}
           className="text-center"
         >
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-neon-cyan to-neon-magenta flex items-center justify-center animate-pulse">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-neon-cyan/20 border border-neon-cyan/30 flex items-center justify-center animate-pulse">
             <svg className="w-8 h-8 text-background" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
             </svg>
@@ -76,7 +76,7 @@ export default function Home() {
               initial={{ width: "0%" }}
               animate={{ width: "100%" }}
               transition={{ duration: 2, ease: "easeInOut" }}
-              className="h-full bg-gradient-to-r from-neon-cyan to-neon-magenta rounded-full"
+              className="h-full bg-neon-cyan rounded-full"
             />
           </div>
         </motion.div>
@@ -100,8 +100,8 @@ export default function Home() {
             onClick={() => setShowPredictor(!showPredictor)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition-all ${
               showPredictor
-                ? "bg-neon-magenta/20 text-neon-magenta border border-neon-magenta/30"
-                : "bg-surface text-neon-magenta/70 hover:text-neon-magenta border border-transparent"
+                ? "bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/30"
+                : "bg-surface text-neon-cyan/70 hover:text-neon-cyan border border-transparent"
             }`}
           >
             <Zap className="w-3.5 h-3.5" />

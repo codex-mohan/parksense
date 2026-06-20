@@ -78,7 +78,7 @@ export default function ZoneDetail({ zone, cluster, onClose }: ZoneDetailProps) 
                   icon={Target}
                   label="Junction %"
                   value={`${((data as Zone).junction_pct * 100).toFixed(0)}%`}
-                  color="neon-magenta"
+                  color="neon-orange"
                 />
                 <MetricCard
                   icon={Zap}
@@ -105,7 +105,7 @@ export default function ZoneDetail({ zone, cluster, onClose }: ZoneDetailProps) 
                   icon={Target}
                   label="Junction %"
                   value={`${((data as Cluster).junction_pct * 100).toFixed(0)}%`}
-                  color="neon-magenta"
+                  color="neon-orange"
                 />
                 <MetricCard
                   icon={MapPin}
@@ -157,8 +157,8 @@ export default function ZoneDetail({ zone, cluster, onClose }: ZoneDetailProps) 
           )}
 
           {isZone && (data as Zone).junction_pct > 0.5 && (
-            <div className="glass rounded-lg p-3 border border-neon-magenta/20">
-              <h4 className="text-xs font-semibold text-neon-magenta mb-1 flex items-center gap-1">
+            <div className="glass rounded-lg p-3 border border-neon-orange/20">
+              <h4 className="text-xs font-semibold text-neon-orange mb-1 flex items-center gap-1">
                 <Target className="w-3 h-3" />
                 JUNCTION ALERT
               </h4>

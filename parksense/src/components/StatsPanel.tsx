@@ -59,7 +59,7 @@ export default function StatsPanel({ summary }: StatsPanelProps) {
       label: "Junction",
       value: Math.round(summary.junction_pct * 100),
       icon: Target,
-      color: "neon-magenta",
+      color: "neon-cyan",
       suffix: "%",
     },
     {

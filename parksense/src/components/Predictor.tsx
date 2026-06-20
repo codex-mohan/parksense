@@ -102,7 +102,7 @@ export default function Predictor({ onPredict }: PredictorProps) {
       transition={{ delay: 0.7 }}
       className="glass rounded-xl p-4"
     >
-      <h3 className="text-sm font-semibold text-neon-magenta mb-4 flex items-center gap-2">
+      <h3 className="text-sm font-semibold text-neon-cyan mb-4 flex items-center gap-2">
         <Zap className="w-4 h-4" />
         CONGESTION PREDICTOR
       </h3>
@@ -228,7 +228,7 @@ export default function Predictor({ onPredict }: PredictorProps) {
         <button
           onClick={handlePredict}
           disabled={loading}
-          className="w-full py-2.5 rounded-lg bg-gradient-to-r from-neon-magenta to-neon-cyan text-background font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="w-full py-2.5 rounded-lg bg-neon-cyan text-background font-bold text-sm hover:bg-neon-cyan/90 transition-opacity disabled:opacity-50"
         >
           {loading ? "PREDICTING..." : "PREDICT CONGESTION IMPACT"}
         </button>

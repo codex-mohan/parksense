@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #0a0a0f;
-  --color-foreground: #e0e0ff;
-  --color-neon-cyan: #00f0ff;
-  --color-neon-magenta: #ff00aa;
-  --color-neon-green: #00ff88;
-  --color-neon-yellow: #ffee00;
-  --color-neon-red: #ff3355;
-  --color-surface: #12121f;
-  --color-surface-light: #1a1a2e;
-  --color-border: #2a2a4a;
+  --color-background: #080b12;
+  --color-foreground: #c8d0e0;
+  --color-neon-cyan: #00d4e6;
+  --color-neon-green: #00c97b;
+  --color-neon-yellow: #f0c030;
+  --color-neon-red: #e84040;
+  --color-neon-orange: #e87830;
+  --color-surface: #0f1318;
+  --color-surface-light: #161c24;
+  --color-border: #1e2a36;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -26,32 +26,9 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
 }
 
-@keyframes pulse-neon {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-@keyframes glow {
-  0%, 100% { box-shadow: 0 0 5px var(--color-neon-cyan), 0 0 10px rgba(0, 240, 255, 0.3); }
-  50% { box-shadow: 0 0 10px var(--color-neon-cyan), 0 0 20px rgba(0, 240, 255, 0.5); }
-}
-
-@keyframes scan-line {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
-}
-
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-pulse-neon {
-  animation: pulse-neon 2s ease-in-out infinite;
-}
-
-.animate-glow {
-  animation: glow 2s ease-in-out infinite;
 }
 
 .animate-fade-in-up {
@@ -59,39 +36,34 @@ body {
 }
 
 .neon-text {
-  text-shadow: 0 0 7px var(--color-neon-cyan), 0 0 10px var(--color-neon-cyan), 0 0 21px var(--color-neon-cyan);
-}
-
-.neon-border {
-  border: 1px solid var(--color-neon-cyan);
-  box-shadow: 0 0 5px rgba(0, 240, 255, 0.2), inset 0 0 5px rgba(0, 240, 255, 0.1);
+  text-shadow: 0 0 7px var(--color-neon-cyan), 0 0 14px rgba(0, 212, 230, 0.4);
 }
 
 .glass {
-  background: rgba(18, 18, 31, 0.8);
+  background: rgba(15, 19, 24, 0.85);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 240, 255, 0.15);
+  border: 1px solid rgba(0, 212, 230, 0.12);
 }
 
 .glass-dark {
-  background: rgba(10, 10, 15, 0.9);
+  background: rgba(8, 11, 18, 0.92);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 240, 255, 0.1);
+  border: 1px solid rgba(0, 212, 230, 0.08);
 }
 
 .maplibregl-popup-content {
   background: var(--color-surface) !important;
   color: var(--color-foreground) !important;
-  border: 1px solid var(--color-neon-cyan) !important;
+  border: 1px solid rgba(0, 212, 230, 0.3) !important;
   border-radius: 8px !important;
-  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
 }
 
 .maplibregl-popup-tip {
-  border-top-color: var(--color-neon-cyan) !important;
+  border-top-color: var(--color-surface) !important;
 }
 
 .maplibregl-ctrl-attrib {
-  background: rgba(10, 10, 15, 0.7) !important;
-  color: #555 !important;
+  background: rgba(8, 11, 18, 0.8) !important;
+  color: #444 !important;
 }

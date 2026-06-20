@@ -176,7 +176,7 @@ export default function MapComponent({
           <span>Medium</span>
           <div className="w-2 h-2 rounded-full bg-neon-red" />
           <span>High</span>
-          <div className="w-2 h-2 rounded-full bg-neon-magenta" />
+          <div className="w-2 h-2 rounded-full bg-neon-red" />
           <span>Critical</span>
         </div>
       </div>
