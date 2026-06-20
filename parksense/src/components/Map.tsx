@@ -189,7 +189,7 @@ export default function MapComponent({
   });
 
   useEffect(() => {
-    if (focusZone) {
+    if (focusZone && typeof focusZone.lat === "number" && typeof focusZone.lon === "number") {
       setViewState((prev) => ({
         ...prev,
         longitude: focusZone.lon,
