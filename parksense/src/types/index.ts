@@ -82,3 +82,19 @@ export interface PredictionResult {
 }
 
 export type MapLayer = "heatmap" | "hexbin" | "scatter" | "clusters";
+
+export interface Prediction {
+  latitude: number;
+  longitude: number;
+  congestion_score: number;
+  congestion_level: string;
+  model_used: string;
+  recommendation: string;
+  risk_factors: {
+    at_junction: boolean;
+    rush_hour: boolean;
+    heavy_vehicle: boolean;
+    main_road_violation: boolean;
+    severity: number;
+  };
+}

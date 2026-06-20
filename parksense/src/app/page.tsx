@@ -11,7 +11,7 @@ import TemporalChart from "@/components/TemporalChart";
 import ZoneDetail from "@/components/ZoneDetail";
 import Predictor from "@/components/Predictor";
 import ModelComparison from "@/components/ModelComparison";
-import type { Violation, Cluster, Zone, TemporalData, Summary, MapLayer } from "@/types";
+import type { Violation, Cluster, Zone, TemporalData, Summary, MapLayer, Prediction } from "@/types";
 
 const MapComponent = dynamic(() => import("@/components/Map"), { ssr: false });
 
@@ -29,6 +29,7 @@ export default function Home() {
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
   const [selectedCluster, setSelectedCluster] = useState<Cluster | null>(null);
   const [showPredictor, setShowPredictor] = useState(false);
+  const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [bottomTab, setBottomTab] = useState<"temporal" | "models">("temporal");
 
   useEffect(() => {
@@ -132,6 +133,7 @@ export default function Home() {
               <MapComponent
                 violations={violations}
                 clusters={clusters}
+                predictions={predictions}
                 activeLayer={activeLayer}
                 hourFilter={hourFilter}
                 levelFilter={levelFilter}
@@ -151,7 +153,24 @@ export default function Home() {
                   exit={{ opacity: 0, x: 20 }}
                   className="absolute top-4 right-4 w-80 pointer-events-auto max-h-[calc(100%-2rem)] overflow-y-auto z-10"
                 >
-                  <Predictor />
+                  <Predictor
+                    onPredict={(pred: any) => {
+                      const lat = parseFloat(pred.latitude || "12.97");
+                      const lon = parseFloat(pred.longitude || "77.59");
+                      setPredictions((prev) => [
+                        ...prev,
+                        {
+                          latitude: lat,
+                          longitude: lon,
+                          congestion_score: pred.congestion_score,
+                          congestion_level: pred.congestion_level,
+                          model_used: pred.model_used,
+                          recommendation: pred.recommendation,
+                          risk_factors: pred.risk_factors,
+                        },
+                      ]);
+                    }}
+                  />
                 </motion.div>
               )}
             </div>

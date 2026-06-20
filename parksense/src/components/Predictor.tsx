@@ -92,6 +92,8 @@ export default function Predictor({ onPredict }: PredictorProps) {
         }),
       });
       const data = await res.json();
+      data.latitude = parseFloat(lat);
+      data.longitude = parseFloat(lon);
       setResult(data);
       onPredict?.(data);
     } catch {

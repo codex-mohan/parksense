@@ -6,7 +6,7 @@ import { MapboxOverlay } from "@deck.gl/mapbox";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 import { ScatterplotLayer } from "@deck.gl/layers";
 import type { DeckProps, PickingInfo } from "@deck.gl/core";
-import type { Violation, Cluster } from "@/types";
+import type { Violation, Cluster, Prediction } from "@/types";
 import "maplibre-gl/dist/maplibre-gl.css";
 import {
   Layers,
@@ -152,6 +152,7 @@ function MapControls({
 interface MapComponentProps {
   violations: Violation[];
   clusters: Cluster[];
+  predictions: Prediction[];
   activeLayer: "heatmap" | "hexbin" | "scatter" | "clusters";
   hourFilter: [number, number];
   levelFilter: string[];
@@ -171,6 +172,7 @@ const LEVEL_COLORS: Record<string, [number, number, number, number]> = {
 export default function MapComponent({
   violations,
   clusters,
+  predictions,
   activeLayer,
   hourFilter,
   levelFilter,
@@ -284,12 +286,77 @@ export default function MapComponent({
       );
     }
 
+    if (predictions.length > 0) {
+      result.push(
+        new ScatterplotLayer({
+          id: "prediction-markers",
+          data: predictions,
+          getPosition: (d: Prediction) => [d.longitude, d.latitude],
+          getFillColor: (d: Prediction) => {
+            if (d.congestion_level === "CRITICAL") return [255, 40, 60, 255];
+            if (d.congestion_level === "HIGH") return [255, 140, 0, 255];
+            if (d.congestion_level === "MEDIUM") return [255, 238, 0, 255];
+            return [0, 255, 136, 255];
+          },
+          getRadius: 18,
+          radiusMinPixels: 12,
+          radiusMaxPixels: 20,
+          pickable: true,
+          stroked: true,
+          getLineColor: [255, 255, 255, 255],
+          getLineWidth: 3,
+        })
+      );
+      // Animated ring around prediction
+      result.push(
+        new ScatterplotLayer({
+          id: "prediction-ring",
+          data: predictions,
+          getPosition: (d: Prediction) => [d.longitude, d.latitude],
+          getFillColor: [0, 0, 0, 0],
+          getRadius: 35,
+          radiusMinPixels: 20,
+          radiusMaxPixels: 30,
+          pickable: false,
+          stroked: true,
+          getLineColor: (d: Prediction) => {
+            if (d.congestion_level === "CRITICAL") return [255, 40, 60, 150];
+            if (d.congestion_level === "HIGH") return [255, 140, 0, 150];
+            if (d.congestion_level === "MEDIUM") return [255, 238, 0, 150];
+            return [0, 255, 136, 150];
+          },
+          getLineWidth: 2,
+        })
+      );
+    }
+
     return result;
-  }, [filteredViolations, clusters, activeLayer, satellite, onClusterClick, onViolationClick]);
+  }, [filteredViolations, clusters, predictions, activeLayer, satellite, onClusterClick, onViolationClick]);
 
   const getTooltip = useCallback((info: PickingInfo) => {
     if (!info.object) return null;
     const d = info.object as any;
+    if (d.model_used !== undefined && d.congestion_score !== undefined) {
+      return {
+        text: [
+          `PREDICTION — ${d.model_used}`,
+          `Score: ${d.congestion_score.toFixed(1)} | ${d.congestion_level}`,
+          d.risk_factors?.at_junction ? "At junction" : "",
+          d.risk_factors?.rush_hour ? "Rush hour" : "",
+          d.risk_factors?.heavy_vehicle ? "Heavy vehicle" : "",
+          d.recommendation || "",
+        ].filter(Boolean).join("\n"),
+        style: {
+          background: "#0a0f18",
+          color: "#c8d0e0",
+          border: "2px solid #00d4e6",
+          borderRadius: "8px",
+          fontSize: "11px",
+          maxWidth: "280px",
+          whiteSpace: "pre-wrap",
+        },
+      };
+    }
     if (d.cluster !== undefined && d.congestion_score !== undefined) {
       return {
         text: `Score: ${d.congestion_score.toFixed(1)} | ${d.congestion_level}\n${d.police_station}`,
