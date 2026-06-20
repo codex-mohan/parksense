@@ -39,6 +39,8 @@ export interface Zone {
   heavy_vehicle_pct: number;
   critical_pct: number;
   priority_score: number;
+  lat: number;
+  lon: number;
 }
 
 export interface TemporalData {

@@ -68,6 +68,13 @@ def export_clusters(df, cluster_labels):
 
 def export_zones(df):
     zone_priority = compute_zone_priority(df)
+
+    centroids = df.groupby("police_station").agg(
+        lat=("latitude", "mean"),
+        lon=("longitude", "mean"),
+    ).reset_index()
+    zone_priority = zone_priority.merge(centroids, on="police_station", how="left")
+
     records = zone_priority.to_dict(orient="records")
     with open(OUTPUT_DIR / "zones.json", "w") as f:
         json.dump(records, f, default=np_default)

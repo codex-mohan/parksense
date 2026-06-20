@@ -133,11 +133,13 @@ export default function Home() {
                 activeLayer={activeLayer}
                 hourFilter={hourFilter}
                 levelFilter={levelFilter}
+                focusZone={activeZoneData}
                 onClusterClick={(c) => {
                   setSelectedCluster(c);
                   setSelectedZone(null);
                 }}
                 onViolationClick={() => {}}
+                onLayerChange={setActiveLayer}
               />
 
               {showPredictor && (
